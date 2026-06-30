@@ -22,7 +22,6 @@
     "noUncheckedSideEffectImports": true,
 
     /* Types */
-    "types": ["@react-three/fiber"],
     "allowJs": true
   },
   "include": ["src"]

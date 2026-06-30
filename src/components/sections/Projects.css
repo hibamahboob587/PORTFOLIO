@@ -11,51 +11,65 @@
   margin-bottom: 0;
 }
 
-.projects__carousel-wrapper {
+/* ---------- 3D coverflow stage ---------- */
+.projects__stage {
+  position: relative;
   width: 100%;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-}
-
-.projects__carousel-wrapper::-webkit-scrollbar {
-  display: none;
-}
-
-.projects__carousel {
+  height: 460px;
+  margin: 1.5rem 0 1rem;
+  perspective: 1800px;
   display: flex;
-  gap: 3rem;
-  width: max-content;
-  /* padding to center the first and last items (50vw - half the card width (160px)) */
-  padding-left: calc(50vw - 160px);
-  padding-right: calc(50vw - 160px);
-  padding-bottom: 4rem; /* space for hover transform */
-}
-
-.projects__item {
-  width: 320px;
-  flex-shrink: 0;
-  cursor: pointer;
-  scroll-snap-align: center;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.projects__item:hover {
-  transform: translateY(-8px);
-}
-
-.projects__card {
-  padding: 0;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
-  height: 100%;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 14%,
+    #000 86%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 14%,
+    #000 86%,
+    transparent
+  );
+}
+
+.projects__slide {
+  position: absolute;
+  width: 340px;
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
+}
+.projects__slide:not(.is-active) {
+  cursor: pointer;
+}
+
+.projects__card-3d {
+  position: relative;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  border-radius: 14px;
+  overflow: hidden;
   background: var(--bg-card);
+  border: 1px solid color-mix(in srgb, var(--card-accent) 25%, transparent);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+.projects__slide.is-active .projects__card-3d {
+  cursor: pointer;
+  border-color: var(--card-accent);
+  box-shadow: 0 0 0 1px var(--card-accent),
+    0 0 46px color-mix(in srgb, var(--card-accent) 50%, transparent),
+    0 26px 60px rgba(0, 0, 0, 0.65);
 }
 
 .projects__thumb {
-  height: 140px;
+  height: 150px;
   position: relative;
   display: flex;
   align-items: flex-end;
@@ -116,11 +130,84 @@
   text-transform: uppercase;
   margin-top: auto;
   align-self: flex-start;
-  transition: text-shadow 0.2s ease;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.35s ease, transform 0.35s ease, text-shadow 0.2s ease;
 }
 
-.projects__item:hover .projects__more {
+.projects__slide.is-active .projects__more {
+  opacity: 1;
+  transform: translateX(0);
   text-shadow: 0 0 8px currentColor;
+}
+.projects__slide.is-active .projects__card-3d:hover .projects__more {
+  transform: translateX(4px);
+}
+
+/* Autoplay progress bar across the bottom of the focused card. */
+.projects__progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  transform-origin: left center;
+  box-shadow: 0 0 10px currentColor;
+}
+
+/* ---------- Controls ---------- */
+.projects__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.projects__arrow {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  font-size: 1.6rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+.projects__arrow:hover {
+  border-color: var(--neon-cyan);
+  background: rgba(0, 240, 255, 0.08);
+  box-shadow: 0 0 18px var(--cyan-glow);
+  transform: scale(1.08);
+}
+
+.projects__dots {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.projects__dot {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: width 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+.projects__dot.is-active {
+  width: 30px;
+  border-radius: 6px;
+  background: var(--dot-accent, var(--neon-cyan));
+  box-shadow: 0 0 12px var(--dot-accent, var(--cyan-glow));
 }
 
 /* Modal */
@@ -199,8 +286,11 @@
 }
 
 @media (max-width: 768px) {
-  .projects__item {
-    width: 280px;
+  .projects__stage {
+    height: 420px;
+  }
+  .projects__slide {
+    width: 270px;
   }
   .projects__modal {
     padding: 1.5rem;

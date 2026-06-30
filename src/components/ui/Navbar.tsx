@@ -36,7 +36,7 @@ export default function Navbar() {
       transition={{ duration: 0.35, ease: 'easeInOut' }}
     >
       <div className="navbar__inner">
-        <button className="navbar__logo font-display" onClick={() => go('hero')}>
+        <button className="navbar__logo font-display cursor-target" onClick={() => go('hero')}>
           {PROFILE.firstName}
           <span className="navbar__logo-accent">_{PROFILE.lastName}</span>
           <span className="navbar__cursor">▮</span>
@@ -46,7 +46,7 @@ export default function Navbar() {
           {NAV_ITEMS.map((item) => (
             <button
               key={item.id}
-              className={`navbar__link ${
+              className={`navbar__link cursor-target ${
                 activeSection === item.id ? 'navbar__link--active' : ''
               }`}
               onClick={() => go(item.id)}
@@ -58,7 +58,7 @@ export default function Navbar() {
         </nav>
 
         <button
-          className={`navbar__burger ${menuOpen ? 'is-open' : ''}`}
+          className={`navbar__burger cursor-target ${menuOpen ? 'is-open' : ''}`}
           aria-label="Toggle menu"
           onClick={() => setMenuOpen((o) => !o)}
         >

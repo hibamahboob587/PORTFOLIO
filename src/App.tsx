@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect } from 'react';
+import { useEffect } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -7,6 +7,7 @@ import TargetCursor from './components/ui/TargetCursor';
 import Navbar from './components/ui/Navbar';
 import ScrollProgress from './components/ui/ScrollProgress';
 import SectionWrapper from './components/layout/SectionWrapper';
+import ParticleCanvas from './components/canvas/ParticleCanvas';
 import Hero from './components/sections/Hero';
 import About from './components/sections/About';
 import Skills from './components/sections/Skills';
@@ -16,9 +17,6 @@ import { PROFILE } from './utils/constants';
 import './App.css';
 
 gsap.registerPlugin(ScrollTrigger);
-
-// The 3D canvas is heavy — load it lazily so first paint isn't blocked.
-const Scene = lazy(() => import('./components/canvas/Scene'));
 
 export default function App() {
   useEffect(() => {
@@ -53,11 +51,11 @@ export default function App() {
       <ScrollProgress />
       <Navbar />
 
+      {/* Lightweight 2D particle background — replaces the heavy WebGL scene */}
+      <ParticleCanvas />
+
       <main className="app">
         <SectionWrapper id="hero">
-          <Suspense fallback={null}>
-            <Scene />
-          </Suspense>
           <Hero />
         </SectionWrapper>
 
@@ -78,11 +76,8 @@ export default function App() {
         </SectionWrapper>
 
         <footer className="app__footer">
-          <Suspense fallback={null}>
-            <Scene noObjects={true} />
-          </Suspense>
           <span>
-            Built with <span className="app__heart">☕</span> and Three.js
+            Built with <span className="app__heart">☕</span> and passion
           </span>
           <span className="app__footer-meta font-display">
             © {new Date().getFullYear()} {PROFILE.name} // ALL SYSTEMS NOMINAL

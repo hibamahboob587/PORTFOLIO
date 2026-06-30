@@ -9,8 +9,22 @@
   padding: 0 1.25rem;
 }
 
+/* Interactive PixelBlast background, pinned behind the hero content. */
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: auto;
+}
+
 .hero__content {
+  position: relative;
+  z-index: 1;
   max-width: 900px;
+  pointer-events: none;
+}
+.hero__content > * {
+  pointer-events: auto;
 }
 
 .hero__eyebrow {

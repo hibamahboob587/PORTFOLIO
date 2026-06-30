@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 import GlitchText from '../ui/GlitchText';
 import NeonButton from '../ui/NeonButton';
+import PixelBlast from '../canvas/PixelBlast';
 import { PROFILE } from '../../utils/constants';
 import './Hero.css';
 
@@ -19,6 +20,27 @@ const item = {
 export default function Hero() {
   return (
     <div className="hero">
+      {/* Interactive pixel-dither background — click to send ripples */}
+      <div className="hero__bg" aria-hidden="true">
+        <PixelBlast
+          className=""
+          style={{ width: '100%', height: '100%' }}
+          variant="circle"
+          pixelSize={4}
+          color="#00f0ff"
+          patternScale={3}
+          patternDensity={1.1}
+          pixelSizeJitter={0.4}
+          enableRipples
+          rippleSpeed={0.4}
+          rippleThickness={0.12}
+          rippleIntensityScale={1.6}
+          speed={0.55}
+          edgeFade={0.3}
+          transparent
+        />
+      </div>
+
       <motion.div
         className="hero__content"
         variants={container}
@@ -66,7 +88,7 @@ export default function Hero() {
 
       {/* Scroll indicator */}
       <motion.button
-        className="hero__scroll"
+        className="hero__scroll cursor-target"
         aria-label="Scroll down"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

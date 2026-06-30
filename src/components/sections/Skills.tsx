@@ -50,7 +50,6 @@ export default function Skills() {
           baseOpacity={0}
           enableBlur={true}
           baseRotation={0}
-          blurStrength={8}
         >
           Skill Matrix
         </ScrollReveal>

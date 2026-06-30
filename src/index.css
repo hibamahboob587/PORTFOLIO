@@ -223,7 +223,9 @@ p  { line-height: 1.7; }
     rgba(0, 0, 0, 0.18) 3px,
     rgba(0, 0, 0, 0) 4px
   );
-  opacity: 0.15;
+  opacity: 0.12;
+  will-change: opacity;
+  contain: strict;
 }
 
 /* Vignette to focus the center */
@@ -237,6 +239,8 @@ p  { line-height: 1.7; }
     transparent 55%,
     rgba(0, 0, 0, 0.55) 100%
   );
+  will-change: opacity;
+  contain: strict;
 }
 
 /* ---- Accessibility: respect reduced motion ---- */

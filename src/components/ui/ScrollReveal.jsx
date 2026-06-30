@@ -12,7 +12,6 @@ const ScrollReveal = ({
   enableBlur = true,
   baseOpacity = 0.1,
   baseRotation = 3,
-  blurStrength = 4,
   containerClassName = '',
   textClassName = '',
   rotationEnd = 'bottom bottom',
@@ -58,10 +57,11 @@ const ScrollReveal = ({
 
     gsap.fromTo(
       wordElements,
-      { opacity: baseOpacity, willChange: 'opacity' },
+      { opacity: baseOpacity, y: 8 },
       {
         ease: 'none',
         opacity: 1,
+        y: 0,
         stagger: 0.05,
         scrollTrigger: {
           trigger: el,
@@ -73,29 +73,14 @@ const ScrollReveal = ({
       }
     );
 
-    if (enableBlur) {
-      gsap.fromTo(
-        wordElements,
-        { filter: `blur(${blurStrength}px)` },
-        {
-          ease: 'none',
-          filter: 'blur(0px)',
-          stagger: 0.05,
-          scrollTrigger: {
-            trigger: el,
-            scroller,
-            start: 'top bottom-=20%',
-            end: wordAnimationEnd,
-            scrub: true
-          }
-        }
-      );
-    }
+    // Blur animation removed — filter: blur() on many elements is extremely
+    // expensive and the primary cause of scroll jank. The opacity + translateY
+    // stagger achieves a similar "emerging" feel at near-zero cost.
 
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
-  }, [scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd, blurStrength]);
+  }, [scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd]);
 
   return (
     <h2 ref={containerRef} className={`scroll-reveal ${containerClassName}`}>

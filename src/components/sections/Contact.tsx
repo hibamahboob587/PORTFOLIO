@@ -39,7 +39,6 @@ export default function Contact() {
             baseOpacity={0}
             enableBlur={true}
             baseRotation={0}
-            blurStrength={8}
           >
             Let's Build Something
           </ScrollReveal>
@@ -49,7 +48,6 @@ export default function Contact() {
             baseOpacity={0}
             enableBlur={true}
             baseRotation={0}
-            blurStrength={4}
           >
             Got a project, a role, or a wild idea? Drop a transmission.
           </ScrollReveal>
@@ -127,7 +125,7 @@ export default function Contact() {
         >
           <div className="contact__direct">
             <span className="contact__direct-label font-display">Direct line</span>
-            <a href={`mailto:${PROFILE.email}`} className="contact__email">
+            <a href={`mailto:${PROFILE.email}`} className="contact__email cursor-target">
               {PROFILE.email}
             </a>
           </div>
@@ -139,7 +137,7 @@ export default function Contact() {
                 href={s.url}
                 target={s.url.startsWith('http') ? '_blank' : undefined}
                 rel="noreferrer"
-                className="contact__social font-display"
+                className="contact__social font-display cursor-target"
               >
                 <span className="contact__social-arrow">↗</span>
                 {s.label}

@@ -1,136 +1,167 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import NeonCard from '../ui/NeonCard';
 import NeonButton from '../ui/NeonButton';
 import ScrollReveal from '../ui/ScrollReveal';
 import { PROJECTS, COLORS, type Project } from '../../utils/constants';
 import './Projects.css';
 
+const AUTOPLAY_MS = 4200;
+const COUNT = PROJECTS.length;
+
 export default function Projects() {
   const [active, setActive] = useState<Project | null>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
 
+  const goTo = useCallback((i: number) => setCurrent(((i % COUNT) + COUNT) % COUNT), []);
+  const step = useCallback((dir: number) => setCurrent((c) => (c + dir + COUNT) % COUNT), []);
+
+  // Self-running showcase — advances on its own, pauses while the visitor
+  // is hovering (inspecting) or has a project modal open.
   useEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
+    if (paused || active) return;
+    const id = setInterval(() => setCurrent((c) => (c + 1) % COUNT), AUTOPLAY_MS);
+    return () => clearInterval(id);
+  }, [paused, active]);
 
-    let animationFrameId: number;
-    let lastTime = performance.now();
-    let isPaused = false;
-
-    const tick = (currentTime: number) => {
-      if (isPaused) {
-        lastTime = currentTime;
-        animationFrameId = requestAnimationFrame(tick);
-        return;
-      }
-
-      if (currentTime - lastTime >= 3500) {
-        if (!wrapper) return;
-        
-        // Card width (320px) + Gap (3rem = 48px) = 368px
-        const itemWidth = 368; 
-        
-        // Check if we are at or near the end
-        const isAtEnd = wrapper.scrollLeft >= wrapper.scrollWidth - wrapper.clientWidth - 10;
-        
-        if (isAtEnd) {
-          wrapper.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          wrapper.scrollBy({ left: itemWidth, behavior: 'smooth' });
-        }
-        lastTime = currentTime;
-      }
-      animationFrameId = requestAnimationFrame(tick);
+  // Arrow-key navigation for keyboard visitors.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (active) return;
+      if (e.key === 'ArrowLeft') step(-1);
+      if (e.key === 'ArrowRight') step(1);
     };
-
-    animationFrameId = requestAnimationFrame(tick);
-
-    // Pause on hover or touch
-    const pause = () => { isPaused = true; };
-    const resume = () => { isPaused = false; };
-
-    wrapper.addEventListener('mouseenter', pause);
-    wrapper.addEventListener('mouseleave', resume);
-    wrapper.addEventListener('touchstart', pause, { passive: true });
-    wrapper.addEventListener('touchend', resume, { passive: true });
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-      wrapper.removeEventListener('mouseenter', pause);
-      wrapper.removeEventListener('mouseleave', resume);
-      wrapper.removeEventListener('touchstart', pause);
-      wrapper.removeEventListener('touchend', resume);
-    };
-  }, []);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [step, active]);
 
   return (
-    <div className="projects">
+    <div
+      className="projects"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
       <div className="section projects__header-container">
         <div className="projects__header">
           <p className="section-eyebrow">03 // Selected Work</p>
           <div className="section-title">
-            <ScrollReveal
-              baseOpacity={0}
-              enableBlur={true}
-              baseRotation={0}
-              blurStrength={8}
-            >
+            <ScrollReveal baseOpacity={0} enableBlur={true} baseRotation={0}>
               Projects
             </ScrollReveal>
           </div>
         </div>
       </div>
 
-      <div className="projects__carousel-wrapper" ref={wrapperRef}>
-        <div className="projects__carousel">
-          {PROJECTS.map((p) => {
-            const accent = COLORS[p.accent];
-            return (
-              <div
-                className="projects__item"
-                key={p.id}
-                onClick={() => setActive(p)}
-              >
-                <NeonCard accent={accent} tilt className="projects__card">
-                  <div
-                    className="projects__thumb"
-                    style={{
-                      background: `linear-gradient(135deg, ${accent}22, transparent 60%), repeating-linear-gradient(45deg, ${accent}11 0 10px, transparent 10px 20px)`,
-                    }}
-                  >
-                    <span className="projects__year font-display">{p.year}</span>
-                    <span
-                      className="projects__id font-display"
-                      style={{ color: accent }}
-                    >
-                      {p.id.toUpperCase()}
-                    </span>
-                  </div>
+      <div className="projects__stage">
+        {PROJECTS.map((p, i) => {
+          // Shortest signed distance from the active index (so the loop wraps both ways).
+          let offset = i - current;
+          if (offset > COUNT / 2) offset -= COUNT;
+          if (offset < -COUNT / 2) offset += COUNT;
+          const abs = Math.abs(offset);
+          const isActive = offset === 0;
+          const visible = abs <= 2;
+          const accent = COLORS[p.accent];
 
-                  <div className="projects__body">
-                    <h3 className="projects__title font-display">{p.title}</h3>
-                    <p className="projects__blurb">{p.blurb}</p>
-                    <div className="projects__tags">
-                      {p.tags.map((t) => (
-                        <span
-                          className="projects__tag"
-                          key={t}
-                          style={{ borderColor: `${accent}55`, color: accent }}
-                        >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                    <span className="projects__more font-display" style={{ color: accent }}>
-                      View details →
-                    </span>
+          return (
+            <motion.div
+              key={p.id}
+              className={`projects__slide ${isActive ? 'is-active' : ''}`}
+              initial={false}
+              animate={{
+                x: `${offset * 62}%`,
+                scale: isActive ? 1 : Math.max(0.62, 0.8 - (abs - 1) * 0.08),
+                rotateY: offset * -26,
+                opacity: visible ? (isActive ? 1 : 0.4) : 0,
+                filter: isActive ? 'blur(0px)' : 'blur(3px)',
+                zIndex: 20 - abs,
+              }}
+              transition={{ type: 'spring', stiffness: 180, damping: 26, mass: 0.9 }}
+              style={{ pointerEvents: visible ? 'auto' : 'none' }}
+              onClick={() => (isActive ? setActive(p) : goTo(i))}
+            >
+              <div
+                className={`projects__card-3d ${isActive ? 'cursor-target' : ''}`}
+                style={{ ['--card-accent' as string]: accent }}
+              >
+                <div
+                  className="projects__thumb"
+                  style={{
+                    background: `linear-gradient(135deg, ${accent}33, transparent 60%), repeating-linear-gradient(45deg, ${accent}14 0 10px, transparent 10px 20px)`,
+                  }}
+                >
+                  <span className="projects__year font-display">{p.year}</span>
+                  <span className="projects__id font-display" style={{ color: accent }}>
+                    {p.id.toUpperCase()}
+                  </span>
+                </div>
+
+                <div className="projects__body">
+                  <h3 className="projects__title font-display">{p.title}</h3>
+                  <p className="projects__blurb">{p.blurb}</p>
+                  <div className="projects__tags">
+                    {p.tags.map((t) => (
+                      <span
+                        className="projects__tag"
+                        key={t}
+                        style={{ borderColor: `${accent}55`, color: accent }}
+                      >
+                        {t}
+                      </span>
+                    ))}
                   </div>
-                </NeonCard>
+                  <span className="projects__more font-display" style={{ color: accent }}>
+                    View details →
+                  </span>
+                </div>
+
+                {/* Autoplay progress — only on the focused card. */}
+                {isActive && !paused && !active && (
+                  <motion.span
+                    key={current}
+                    className="projects__progress"
+                    style={{ background: accent }}
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: AUTOPLAY_MS / 1000, ease: 'linear' }}
+                  />
+                )}
               </div>
-            );
-          })}
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Self-service controls */}
+      <div className="projects__controls">
+        <button
+          className="projects__arrow cursor-target"
+          aria-label="Previous project"
+          onClick={() => step(-1)}
+        >
+          ‹
+        </button>
+
+        <div className="projects__dots">
+          {PROJECTS.map((p, i) => (
+            <button
+              key={p.id}
+              className={`projects__dot cursor-target ${i === current ? 'is-active' : ''}`}
+              aria-label={`Go to ${p.title}`}
+              aria-current={i === current}
+              onClick={() => goTo(i)}
+              style={{ ['--dot-accent' as string]: COLORS[p.accent] }}
+            />
+          ))}
         </div>
+
+        <button
+          className="projects__arrow cursor-target"
+          aria-label="Next project"
+          onClick={() => step(1)}
+        >
+          ›
+        </button>
       </div>
 
       {/* ---- Expanded modal ---- */}
@@ -155,7 +186,7 @@ export default function Projects() {
               }}
             >
               <button
-                className="projects__close"
+                className="projects__close cursor-target"
                 onClick={() => setActive(null)}
                 aria-label="Close"
               >
@@ -164,9 +195,7 @@ export default function Projects() {
               <span className="projects__modal-id font-display">
                 {active.id.toUpperCase()} // {active.year}
               </span>
-              <h3 className="projects__modal-title font-display">
-                {active.title}
-              </h3>
+              <h3 className="projects__modal-title font-display">{active.title}</h3>
               <p className="projects__modal-desc">{active.description}</p>
               <div className="projects__tags">
                 {active.tags.map((t) => (

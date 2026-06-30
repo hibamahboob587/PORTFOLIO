@@ -5,15 +5,22 @@ import GlitchText from './GlitchText';
 import './Loader.css';
 
 /**
- * Full-screen boot overlay. Shows an animated progress bar that fills as the
- * 3D scene initialises (`isLoaded` from the store), then fades out.
+ * Full-screen boot overlay. Shows an animated progress bar, then fades out.
+ * Now fires immediately since there's no heavy 3D canvas to wait for.
  */
 export default function Loader() {
   const isLoaded = useStore((s) => s.isLoaded);
+  const setLoaded = useStore((s) => s.setLoaded);
   const [progress, setProgress] = useState(0);
   const [hidden, setHidden] = useState(false);
 
-  // Simulated boot progress that snaps to 100% once the canvas is ready.
+  // Mark as loaded quickly — no heavy 3D scene to wait for.
+  useEffect(() => {
+    const t = setTimeout(() => setLoaded(true), 600);
+    return () => clearTimeout(t);
+  }, [setLoaded]);
+
+  // Simulated boot progress that snaps to 100% once "loaded".
   useEffect(() => {
     let frame: number;
     const tick = () => {
@@ -54,7 +61,7 @@ export default function Loader() {
         <motion.div
           className="loader"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, filter: 'blur(8px)' }}
+          exit={{ opacity: 0 }}
           transition={{ duration: 0.7, ease: 'easeInOut' }}
         >
           <div className="loader__inner">
