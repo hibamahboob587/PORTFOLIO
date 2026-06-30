@@ -1,4 +1,4 @@
-import React, { ElementType } from 'react';
+import { ElementType } from 'react';
 import './GlitchText.css';
 
 interface GlitchTextProps {
@@ -7,7 +7,8 @@ interface GlitchTextProps {
   className?: string;
 }
 
-export default function GlitchText({ text, as: Component = 'span', className = '' }: GlitchTextProps) {
+export default function GlitchText({ text, as, className = '' }: GlitchTextProps) {
+  const Component = (as || 'span') as any;
   return (
     <Component className={`glitch-text ${className}`} data-text={text}>
       {text}
