@@ -1,0 +1,75 @@
+.neon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2rem;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  overflow: hidden;
+  isolation: isolate;
+  transition: box-shadow 0.3s ease, color 0.3s ease, background 0.3s ease;
+}
+
+.neon-btn__label {
+  position: relative;
+  z-index: 2;
+}
+
+/* Sweeping sheen */
+.neon-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.25) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.6s ease;
+}
+.neon-btn:hover::before {
+  transform: translateX(120%);
+}
+
+/* ---- Primary (cyan) ---- */
+.neon-btn--primary {
+  color: #001014;
+  border: 1.5px solid var(--neon-cyan);
+  background: var(--neon-cyan);
+  box-shadow:
+    0 0 18px var(--cyan-glow),
+    0 0 40px rgba(0, 240, 255, 0.4);
+}
+.neon-btn--primary:hover {
+  color: var(--neon-cyan);
+  background: transparent;
+  box-shadow:
+    0 0 10px rgba(0, 240, 255, 0.35),
+    inset 0 0 10px rgba(0, 240, 255, 0.15);
+}
+
+/* ---- Secondary (magenta) ---- */
+.neon-btn--secondary {
+  color: #140009;
+  border: 1.5px solid var(--neon-magenta);
+  background: var(--neon-magenta);
+  box-shadow:
+    0 0 18px var(--magenta-glow),
+    0 0 40px rgba(255, 0, 170, 0.4);
+}
+.neon-btn--secondary:hover {
+  color: var(--neon-magenta);
+  background: transparent;
+  box-shadow:
+    0 0 10px rgba(255, 0, 170, 0.35),
+    inset 0 0 10px rgba(255, 0, 170, 0.15);
+}

@@ -1,0 +1,107 @@
+.skills {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative; /* added for absolute positioning of the loop */
+  overflow: hidden; /* contain the rotated loop */
+  padding-bottom: 4rem;
+}
+
+.skills__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5rem; /* slightly increased gap */
+  position: relative;
+  z-index: 1; /* keep cards above the background loop */
+}
+
+.skills__card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2.5rem; /* adequate padding */
+}
+
+.skills__cat {
+  font-size: 1.25rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px currentColor;
+}
+
+.skills__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.skills__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skills__item-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+}
+
+.skills__pct {
+  font-weight: 700;
+  text-shadow: 0 0 8px currentColor;
+}
+
+.skills__bar {
+  width: 100%;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.skills__fill {
+  height: 100%;
+  border-radius: 2px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.skills__unified-loop {
+  position: absolute;
+  top: 50%;
+  left: -10vw;
+  width: 120vw;
+  transform: translateY(-50%) rotate(-8deg);
+  z-index: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  pointer-events: none; /* so it doesn't block card hovers */
+  opacity: 0.7;
+}
+
+/* Make logos neon */
+.skills__unified-loop svg {
+  filter: drop-shadow(0 0 15px currentColor) drop-shadow(0 0 5px currentColor);
+}
+
+@media (max-width: 860px) {
+  .skills__card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 860px) {
+  .skills__grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+}

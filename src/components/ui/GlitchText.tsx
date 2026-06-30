@@ -1,0 +1,16 @@
+import React, { ElementType } from 'react';
+import './GlitchText.css';
+
+interface GlitchTextProps {
+  text: string;
+  as?: ElementType;
+  className?: string;
+}
+
+export default function GlitchText({ text, as: Component = 'span', className = '' }: GlitchTextProps) {
+  return (
+    <Component className={`glitch-text ${className}`} data-text={text}>
+      {text}
+    </Component>
+  );
+}

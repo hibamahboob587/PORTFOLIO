@@ -1,0 +1,43 @@
+.app {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+/* Each direct section gets its own stacking context above the canvas */
+.app > section {
+  position: relative;
+  z-index: 1;
+}
+
+.app > section:not(#hero) {
+  /* Removed solid black background to allow PixelSnow to show through */
+}
+
+.app__footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 3rem 1.5rem 4rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(0, 240, 255, 0.12);
+  background: linear-gradient(to top, rgba(10, 10, 15, 0.85), transparent);
+  overflow: hidden;
+}
+.app__footer > span {
+  position: relative;
+  z-index: 2;
+}
+.app__heart {
+  filter: drop-shadow(0 0 6px var(--magenta-glow));
+}
+.app__footer-meta {
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: rgba(106, 106, 138, 0.7);
+}
