@@ -13,7 +13,7 @@
   border-radius: 4px;
   overflow: hidden;
   isolation: isolate;
-  transition: box-shadow 0.3s ease, color 0.3s ease, background 0.3s ease;
+  transition: color 0.3s ease, background 0.3s ease;
 }
 
 .neon-btn__label {

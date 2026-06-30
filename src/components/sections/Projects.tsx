@@ -14,10 +14,18 @@ export default function Projects() {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
 
-    let intervalId: number;
+    let animationFrameId: number;
+    let lastTime = performance.now();
+    let isPaused = false;
 
-    const startAutoRotate = () => {
-      intervalId = setInterval(() => {
+    const tick = (currentTime: number) => {
+      if (isPaused) {
+        lastTime = currentTime;
+        animationFrameId = requestAnimationFrame(tick);
+        return;
+      }
+
+      if (currentTime - lastTime >= 3500) {
         if (!wrapper) return;
         
         // Card width (320px) + Gap (3rem = 48px) = 368px
@@ -31,14 +39,16 @@ export default function Projects() {
         } else {
           wrapper.scrollBy({ left: itemWidth, behavior: 'smooth' });
         }
-      }, 3500); // Rotate every 3.5 seconds
+        lastTime = currentTime;
+      }
+      animationFrameId = requestAnimationFrame(tick);
     };
 
-    startAutoRotate();
+    animationFrameId = requestAnimationFrame(tick);
 
     // Pause on hover or touch
-    const pause = () => clearInterval(intervalId);
-    const resume = () => startAutoRotate();
+    const pause = () => { isPaused = true; };
+    const resume = () => { isPaused = false; };
 
     wrapper.addEventListener('mouseenter', pause);
     wrapper.addEventListener('mouseleave', resume);
@@ -46,7 +56,7 @@ export default function Projects() {
     wrapper.addEventListener('touchend', resume, { passive: true });
 
     return () => {
-      clearInterval(intervalId);
+      cancelAnimationFrame(animationFrameId);
       wrapper.removeEventListener('mouseenter', pause);
       wrapper.removeEventListener('mouseleave', resume);
       wrapper.removeEventListener('touchstart', pause);
