@@ -20,14 +20,23 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 0.6rem;
-  padding: 3rem 1.5rem 4rem;
+  min-height: 260px;
+  padding: 4rem 1.5rem;
   text-align: center;
-  color: var(--text-muted);
+  color: var(--neon-magenta);
+  text-shadow: 0 0 10px var(--magenta-glow);
   font-size: 0.9rem;
   border-top: 1px solid rgba(0, 240, 255, 0.12);
   background: linear-gradient(to top, rgba(10, 10, 15, 0.85), transparent);
   overflow: hidden;
+}
+/* PixelBlast animation layer, pinned behind the footer text. */
+.app__footer-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
 }
 .app__footer > span {
   position: relative;
@@ -39,5 +48,6 @@
 .app__footer-meta {
   font-size: 0.68rem;
   letter-spacing: 0.2em;
-  color: rgba(106, 106, 138, 0.7);
+  color: var(--neon-magenta);
+  opacity: 0.85;
 }

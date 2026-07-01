@@ -119,11 +119,11 @@ export default function About() {
             <ul className="about__facts">
               <li>
                 <span>role</span>
-                <span>Full-Stack Engineer</span>
+                <span>Full Stack Developer</span>
               </li>
               <li>
                 <span>focus</span>
-                <span>Web · WebGL · DX</span>
+                <span>Web · UI · UX</span>
               </li>
               <li>
                 <span>stack</span>

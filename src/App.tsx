@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -8,6 +8,7 @@ import Navbar from './components/ui/Navbar';
 import ScrollProgress from './components/ui/ScrollProgress';
 import SectionWrapper from './components/layout/SectionWrapper';
 import ParticleCanvas from './components/canvas/ParticleCanvas';
+import PixelBlast from './components/canvas/PixelBlast';
 import Hero from './components/sections/Hero';
 import About from './components/sections/About';
 import Skills from './components/sections/Skills';
@@ -19,6 +20,22 @@ import './App.css';
 gsap.registerPlugin(ScrollTrigger);
 
 export default function App() {
+  // Only mount the footer's WebGL animation when the footer nears the viewport,
+  // so we never run two PixelBlast contexts at once (hero + footer).
+  const footerRef = useRef<HTMLElement>(null);
+  const [footerInView, setFooterInView] = useState(false);
+
+  useEffect(() => {
+    const el = footerRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setFooterInView(entry.isIntersecting),
+      { rootMargin: '250px' },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   useEffect(() => {
     const lenis = new Lenis();
 
@@ -75,7 +92,30 @@ export default function App() {
           <Contact />
         </SectionWrapper>
 
-        <footer className="app__footer">
+        <footer className="app__footer" ref={footerRef}>
+          {/* Same interactive PixelBlast animation as the hero background */}
+          <div className="app__footer-bg" aria-hidden="true">
+            {footerInView && (
+              <PixelBlast
+                className=""
+                style={{ width: '100%', height: '100%' }}
+                variant="circle"
+                pixelSize={4}
+                color="#00f0ff"
+                patternScale={3}
+                patternDensity={1.1}
+                pixelSizeJitter={0.4}
+                enableRipples
+                rippleSpeed={0.4}
+                rippleThickness={0.12}
+                rippleIntensityScale={1.6}
+                speed={0.55}
+                edgeFade={0.3}
+                transparent
+              />
+            )}
+          </div>
+
           <span>
             Built with <span className="app__heart">☕</span> and passion
           </span>

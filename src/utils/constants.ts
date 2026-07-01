@@ -14,12 +14,12 @@ export const COLORS = {
 } as const;
 
 export const PROFILE = {
-  name: 'JOHN DOE',
-  firstName: 'JOHN',
-  lastName: 'DOE',
-  tagline: 'Full-Stack Developer & Creative Technologist',
-  location: 'Remote · Earth',
-  email: 'hello@johndoe.dev',
+  name: 'EMAN ARSHAD',
+  firstName: 'EMAN',
+  lastName: 'ARSHAD',
+  tagline: 'Full Stack Developer & Creative Technologist',
+  location: 'Remote · Worldwide',
+  email: 'hello@emanarshad.dev',
   resumeUrl: '#',
 } as const;
 
@@ -43,7 +43,7 @@ export interface Stat {
 }
 
 export const STATS: Stat[] = [
-  { value: 6, suffix: '+', label: 'Years Experience' },
+  { value: 3, suffix: '+', label: 'Years Experience' },
   { value: 48, suffix: '+', label: 'Projects Shipped' },
   { value: 22, suffix: 'k', label: 'GitHub Commits' },
   { value: 100, suffix: '%', label: 'Caffeine Powered' },
@@ -91,63 +91,159 @@ export const SKILLS: SkillCategory[] = [
 export interface Project {
   id: string;
   title: string;
+  category: string;
   blurb: string;
   description: string;
   tags: string[];
   accent: keyof typeof COLORS;
+  video: string;
   liveUrl: string;
-  repoUrl: string;
-  year: string;
 }
 
 export const PROJECTS: Project[] = [
   {
-    id: 'neon-grid',
-    title: 'Neon Grid OS',
-    blurb: 'A browser-based synthwave operating system.',
+    id: 'forge-fitness',
+    title: 'Forge Fitness',
+    category: 'Gym & Fitness',
+    blurb: 'High energy gym site with class schedules and quick membership signups.',
     description:
-      'A fully themeable, window-managed desktop environment running in the browser. Features a draggable window system, a fake terminal with a real command parser, and a WebGL boot sequence.',
-    tags: ['React', 'WebGL', 'Zustand', 'Vite'],
+      'A high energy fitness center website complete with class schedules, trainer profiles, and quick membership signups.',
+    tags: ['Fitness', 'Scheduling', 'Memberships'],
     accent: 'cyan',
-    liveUrl: '#',
-    repoUrl: '#',
-    year: '2025',
+    video: '/projects/forge-fitness.mp4',
+    liveUrl: 'https://forge-fitness-theta-five.vercel.app/',
   },
   {
-    id: 'pulse-analytics',
-    title: 'Pulse Analytics',
-    blurb: 'Real-time data viz dashboard for IoT fleets.',
+    id: 'clearwater-dental',
+    title: 'Clearwater Dental',
+    category: 'Dental Clinic',
+    blurb: 'Modern dental clinic with online appointment booking and patient testimonials.',
     description:
-      'Streams millions of sensor events per minute into an interactive 3D globe and time-series charts. Built for sub-100ms render budgets with virtualized rendering and WebSockets.',
-    tags: ['Next.js', 'D3', 'WebSocket', 'Redis'],
+      'A modern, welcoming dental clinic website featuring easy appointment scheduling, service details, and patient testimonials.',
+    tags: ['Healthcare', 'Appointments', 'Testimonials'],
     accent: 'magenta',
-    liveUrl: '#',
-    repoUrl: '#',
-    year: '2024',
+    video: '/projects/clearwater-dental.mp4',
+    liveUrl: 'https://cleanwater-dental.vercel.app/',
   },
   {
-    id: 'synthwave-cms',
-    title: 'Synthwave CMS',
-    blurb: 'Headless CMS with a retro-futurist editor.',
+    id: 'brightpath',
+    title: 'Brightpath',
+    category: 'EdTech',
+    blurb: 'Interactive online learning platform for course management and student engagement.',
     description:
-      'A type-safe headless content platform with a block-based editor, live preview, and a plugin API. Powers a network of indie publications with edge-rendered delivery.',
-    tags: ['TypeScript', 'GraphQL', 'PostgreSQL', 'Docker'],
+      'An interactive educational platform designed for seamless online learning, course management, and student engagement.',
+    tags: ['EdTech', 'Online Learning', 'LMS'],
     accent: 'purple',
-    liveUrl: '#',
-    repoUrl: '#',
-    year: '2024',
+    video: '/projects/brightpath.mp4',
+    liveUrl: 'https://bright-path-edtech.vercel.app/',
   },
   {
-    id: 'aurora-engine',
-    title: 'Aurora Engine',
-    blurb: 'A tiny procedural shader playground.',
+    id: 'solene',
+    title: 'Solene',
+    category: 'Fashion',
+    blurb: 'Sleek fashion ecommerce storefront with a premium shopping experience.',
     description:
-      'An in-browser GLSL playground with hot-reload, an audio-reactive uniform bus, and a gallery of community shaders. Designed to make learning shader art approachable.',
-    tags: ['Three.js', 'GLSL', 'Web Audio', 'React'],
+      'A sleek and stylish ecommerce storefront showcasing the latest fashion trends with an intuitive, premium shopping experience.',
+    tags: ['Ecommerce', 'Fashion', 'Storefront'],
     accent: 'green',
-    liveUrl: '#',
-    repoUrl: '#',
-    year: '2023',
+    video: '/projects/solene.mp4',
+    liveUrl: 'https://solene-fashion.vercel.app/',
+  },
+  {
+    id: 'sterling-home',
+    title: 'Sterling Home Co.',
+    category: 'Home Services',
+    blurb: 'Home services booking platform with customer reviews and instant quoting.',
+    description:
+      'A reliable booking platform for home maintenance and repair services, featuring customer reviews and instant quoting.',
+    tags: ['Home Services', 'Booking', 'Quoting'],
+    accent: 'cyan',
+    video: '/projects/sterling-home.mp4',
+    liveUrl: 'https://sterling-home.vercel.app/',
+  },
+  {
+    id: 'hartwell-cole',
+    title: 'Hartwell & Cole',
+    category: 'Law Firm',
+    blurb: 'Professional law firm site with attorney profiles and consultation booking.',
+    description:
+      'A professional and trustworthy legal practice website detailing practice areas, attorney profiles, and easy consultation booking.',
+    tags: ['Legal', 'Consultation', 'Corporate'],
+    accent: 'magenta',
+    video: '/projects/hartwell-cole.mp4',
+    liveUrl: 'https://hartwell-and-co.vercel.app/',
+  },
+  {
+    id: 'vantage-freight',
+    title: 'Vantage Freight',
+    category: 'Logistics',
+    blurb: 'Logistics and freight site with shipment tracking and global reach.',
+    description:
+      'A robust logistics and freight forwarding site highlighting shipment tracking, core service offerings, and global reach.',
+    tags: ['Logistics', 'Tracking', 'Freight'],
+    accent: 'purple',
+    video: '/projects/vantage-freight.mp4',
+    liveUrl: 'https://vantage-freight-logistics.vercel.app/',
+  },
+  {
+    id: 'wren-hale',
+    title: 'Wren Hale',
+    category: 'Photography',
+    blurb: 'Photography portfolio with high resolution galleries and a contact portal.',
+    description:
+      'A visually stunning photography portfolio showcasing high resolution galleries, service packages, and a contact portal.',
+    tags: ['Photography', 'Portfolio', 'Galleries'],
+    accent: 'green',
+    video: '/projects/wren-hale.mp4',
+    liveUrl: 'https://wren-hale.vercel.app/',
+  },
+  {
+    id: 'meridian-properties',
+    title: 'Meridian Properties',
+    category: 'Real Estate',
+    blurb: 'Real estate portal with property listings and agent directories.',
+    description:
+      'A comprehensive real estate portal for beautiful property listings, agent directories, and seamless neighborhood exploration.',
+    tags: ['Real Estate', 'Listings', 'Search'],
+    accent: 'cyan',
+    video: '/projects/meridian-properties.mp4',
+    liveUrl: 'https://meridian-props.vercel.app/',
+  },
+  {
+    id: 'ember-salt',
+    title: 'Ember & Salt',
+    category: 'Restaurant',
+    blurb: 'Restaurant site with dynamic digital menus and online reservations.',
+    description:
+      'An appetizing restaurant website featuring dynamic digital menus, integrated online reservations, and vibrant food imagery.',
+    tags: ['Restaurant', 'Reservations', 'Menus'],
+    accent: 'magenta',
+    video: '/projects/ember-salt.mp4',
+    liveUrl: 'https://ember-salt-bistro.vercel.app/',
+  },
+  {
+    id: 'pulse',
+    title: 'Pulse',
+    category: 'SaaS Startup',
+    blurb: 'Conversion focused SaaS landing page with key features and pricing tiers.',
+    description:
+      'A clean, conversion focused landing page for a software as a service product highlighting key features and pricing tiers.',
+    tags: ['SaaS', 'Landing Page', 'Pricing'],
+    accent: 'purple',
+    video: '/projects/pulse.mp4',
+    liveUrl: 'https://pulse-saas-startup.vercel.app/',
+  },
+  {
+    id: 'lumen-studio',
+    title: 'Lumen Studio',
+    category: 'Salon & Spa',
+    blurb: 'Elegant spa site with detailed service menus and direct online booking.',
+    description:
+      'A relaxing and elegant spa website offering detailed service menus, wellness packages, and direct online booking.',
+    tags: ['Spa', 'Wellness', 'Booking'],
+    accent: 'green',
+    video: '/projects/lumen-studio.mp4',
+    liveUrl: 'https://lumen-studio-ten.vercel.app/',
   },
 ];
 
@@ -161,11 +257,11 @@ export const SOCIALS: SocialLink[] = [
   { id: 'github', label: 'GitHub', url: 'https://github.com' },
   { id: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.com' },
   { id: 'twitter', label: 'Twitter', url: 'https://twitter.com' },
-  { id: 'email', label: 'Email', url: 'mailto:hello@johndoe.dev' },
+  { id: 'email', label: 'Email', url: 'mailto:hello@emanarshad.dev' },
 ];
 
 export const ABOUT_BIO = [
-  "I'm a full-stack engineer who lives at the intersection of clean architecture and pixel-pushing.",
-  'For the last six years I have shipped products that blend solid backends with experiences people actually remember — from real-time dashboards to WebGL toys.',
-  'When I am not refactoring something, I am probably writing shaders, breaking synthesizers, or arguing about monospace fonts.',
+  "I'm a full stack web developer who loves turning ideas into clean, modern websites that feel effortless to use.",
+  "Over the past 3+ years I've designed and shipped websites for businesses across many industries, from dental clinics and law firms to fashion stores and SaaS startups.",
+  'I care about the details that make a site convert: fast load times, smooth interactions, and a design that earns trust on the very first visit.',
 ];

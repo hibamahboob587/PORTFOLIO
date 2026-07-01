@@ -1,28 +1,68 @@
-import { useState, useEffect, useCallback } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { AnimatePresence, motion, useInView } from 'motion/react';
 import NeonButton from '../ui/NeonButton';
 import ScrollReveal from '../ui/ScrollReveal';
 import { PROJECTS, COLORS, type Project } from '../../utils/constants';
 import './Projects.css';
 
-const AUTOPLAY_MS = 4200;
+const AUTOPLAY_MS = 5000;
 const COUNT = PROJECTS.length;
+
+/**
+ * Looping site-preview video. Only the focused card actually plays — the rest
+ * stay paused so we're never decoding a dozen videos at once.
+ */
+function PreviewVideo({ src, play }: { src: string; play: boolean }) {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    if (play) {
+      v.currentTime = 0;
+      const p = v.play();
+      if (p) p.catch(() => {});
+    } else {
+      v.pause();
+    }
+  }, [play]);
+
+  return (
+    <video
+      ref={ref}
+      className="projects__video"
+      src={src}
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      // Neighbours are visible but idle; the focused card decodes actively.
+      poster=""
+    />
+  );
+}
 
 export default function Projects() {
   const [active, setActive] = useState<Project | null>(null);
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
 
+  // Gate the showcase on visibility so the first card the visitor sees when
+  // they scroll here is index 0 (Forge Fitness), not one the autoplay already
+  // advanced past while the section was still off-screen.
+  const rootRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(rootRef, { margin: '-20% 0px -20% 0px' });
+
   const goTo = useCallback((i: number) => setCurrent(((i % COUNT) + COUNT) % COUNT), []);
   const step = useCallback((dir: number) => setCurrent((c) => (c + dir + COUNT) % COUNT), []);
 
-  // Self-running showcase — advances on its own, pauses while the visitor
-  // is hovering (inspecting) or has a project modal open.
+  // Self-running showcase — advances on its own once in view, pauses while the
+  // visitor is hovering (inspecting) or has a project modal open.
   useEffect(() => {
-    if (paused || active) return;
+    if (paused || active || !inView) return;
     const id = setInterval(() => setCurrent((c) => (c + 1) % COUNT), AUTOPLAY_MS);
     return () => clearInterval(id);
-  }, [paused, active]);
+  }, [paused, active, inView]);
 
   // Arrow-key navigation for keyboard visitors.
   useEffect(() => {
@@ -38,6 +78,7 @@ export default function Projects() {
   return (
     <div
       className="projects"
+      ref={rootRef}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -84,15 +125,10 @@ export default function Projects() {
                 className={`projects__card-3d ${isActive ? 'cursor-target' : ''}`}
                 style={{ ['--card-accent' as string]: accent }}
               >
-                <div
-                  className="projects__thumb"
-                  style={{
-                    background: `linear-gradient(135deg, ${accent}33, transparent 60%), repeating-linear-gradient(45deg, ${accent}14 0 10px, transparent 10px 20px)`,
-                  }}
-                >
-                  <span className="projects__year font-display">{p.year}</span>
-                  <span className="projects__id font-display" style={{ color: accent }}>
-                    {p.id.toUpperCase()}
+                <div className="projects__thumb">
+                  {visible && <PreviewVideo src={p.video} play={isActive && inView} />}
+                  <span className="projects__category font-display" style={{ color: accent }}>
+                    {p.category}
                   </span>
                 </div>
 
@@ -116,7 +152,7 @@ export default function Projects() {
                 </div>
 
                 {/* Autoplay progress — only on the focused card. */}
-                {isActive && !paused && !active && (
+                {isActive && !paused && !active && inView && (
                   <motion.span
                     key={current}
                     className="projects__progress"
@@ -192,9 +228,19 @@ export default function Projects() {
               >
                 ✕
               </button>
-              <span className="projects__modal-id font-display">
-                {active.id.toUpperCase()} // {active.year}
-              </span>
+
+              <div className="projects__modal-media">
+                <video
+                  className="projects__modal-video"
+                  src={active.video}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+              </div>
+
+              <span className="projects__modal-id font-display">{active.category}</span>
               <h3 className="projects__modal-title font-display">{active.title}</h3>
               <p className="projects__modal-desc">{active.description}</p>
               <div className="projects__tags">
@@ -213,10 +259,7 @@ export default function Projects() {
               </div>
               <div className="projects__modal-cta">
                 <NeonButton href={active.liveUrl} variant="primary">
-                  Live Demo
-                </NeonButton>
-                <NeonButton href={active.repoUrl} variant="secondary">
-                  Source
+                  Visit Live Site ↗
                 </NeonButton>
               </div>
             </motion.div>
