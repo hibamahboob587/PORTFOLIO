@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { AnimatePresence, motion, useInView } from 'motion/react';
+import { createPortal } from 'react-dom';
+import { motion, useInView } from 'motion/react';
 import NeonButton from '../ui/NeonButton';
 import ScrollReveal from '../ui/ScrollReveal';
 import { PROJECTS, COLORS, type Project } from '../../utils/constants';
+import { useStore } from '../../store/useStore';
 import './Projects.css';
 
 const AUTOPLAY_MS = 5000;
@@ -52,6 +54,34 @@ export default function Projects() {
   // advanced past while the section was still off-screen.
   const rootRef = useRef<HTMLDivElement>(null);
   const inView = useInView(rootRef, { margin: '-20% 0px -20% 0px' });
+
+  const lenis = useStore((s) => s.lenis);
+
+  // Lock page scrolling while a project modal is open so nothing scrolls
+  // underneath or over it. Lenis.stop() handles wheel/touch; the overflow locks
+  // catch native/programmatic scrolling on both the html and body scrollers.
+  useEffect(() => {
+    if (!active) return;
+    lenis?.stop();
+    const html = document.documentElement;
+    html.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    return () => {
+      lenis?.start();
+      html.style.overflow = '';
+      document.body.style.overflow = '';
+    };
+  }, [active, lenis]);
+
+  // Close on Escape.
+  useEffect(() => {
+    if (!active) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActive(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [active]);
 
   const goTo = useCallback((i: number) => setCurrent(((i % COUNT) + COUNT) % COUNT), []);
   const step = useCallback((dir: number) => setCurrent((c) => (c + dir + COUNT) % COUNT), []);
@@ -200,21 +230,23 @@ export default function Projects() {
         </button>
       </div>
 
-      {/* ---- Expanded modal ---- */}
-      <AnimatePresence>
-        {active && (
+      {/* ---- Expanded modal (portaled to <body> so it escapes the section's
+           stacking context and sits above every other section). Rendered
+           conditionally rather than via AnimatePresence exit, so it always
+           unmounts immediately on close and can never linger as an invisible
+           click-blocking overlay. ---- */}
+      {createPortal(
+        active ? (
           <motion.div
             className="projects__overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
             onClick={() => setActive(null)}
           >
             <motion.div
               className="projects__modal glass"
               initial={{ scale: 0.9, y: 30, opacity: 0 }}
               animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.9, y: 30, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 260, damping: 26 }}
               onClick={(e) => e.stopPropagation()}
               style={{
@@ -264,8 +296,13 @@ export default function Projects() {
               </div>
             </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        ) : null,
+        // Portal into #root (not <body>): this still escapes the section's
+        // stacking context so the modal sits above every section, but keeps it
+        // inside #root alongside the TargetCursor, so the cursor's higher
+        // z-index still renders its brackets on top of the modal.
+        document.getElementById('root') ?? document.body,
+      )}
     </div>
   );
 }

@@ -15,6 +15,7 @@ import Skills from './components/sections/Skills';
 import Projects from './components/sections/Projects';
 import Contact from './components/sections/Contact';
 import { PROFILE } from './utils/constants';
+import { useStore } from './store/useStore';
 import './App.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -36,8 +37,11 @@ export default function App() {
     return () => obs.disconnect();
   }, []);
 
+  const setLenis = useStore((s) => s.setLenis);
+
   useEffect(() => {
     const lenis = new Lenis();
+    setLenis(lenis);
 
     lenis.on('scroll', ScrollTrigger.update);
 
@@ -50,9 +54,10 @@ export default function App() {
 
     return () => {
       lenis.destroy();
+      setLenis(null);
       gsap.ticker.remove(ticker);
     };
-  }, []);
+  }, [setLenis]);
 
   return (
     <>
